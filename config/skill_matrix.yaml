@@ -1,0 +1,25 @@
+{
+  "default_skill": "empathy",
+  "priorities": {
+    "empathy": 2.0,
+    "logic": 1.5
+  },
+  "transition_weights": {
+    "empathy": {
+      "empathy": 0.7,
+      "logic": 0.5
+    },
+    "logic": {
+      "logic": 0.8,
+      "empathy": 0.6
+    }
+  },
+  "conflict_resolution": {
+    "empathy": {
+      "overrides": ["logic"]
+    },
+    "logic": {
+      "overrides": []
+    }
+  }
+}
