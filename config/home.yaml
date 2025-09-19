@@ -1,0 +1,20 @@
+profile: home
+integrations:
+  slack:
+    enabled: false
+    bot_token_env: HOME_SLACK_BOT_TOKEN
+    signing_secret_env: HOME_SLACK_SIGNING_SECRET
+    default_channel: "#personal-lab"
+  telegram:
+    enabled: true
+    bot_token_env: HOME_TELEGRAM_BOT_TOKEN
+    chat_id_env: HOME_TELEGRAM_CHAT_ID
+    allowed_usernames:
+      - family_helper_bot
+  knowledge_base:
+    enabled: true
+    path: data/home_kb.yaml
+    embeddings_model: all-MiniLM-L6-v2
+    refresh_interval_hours: 24
+fallback_message: >-
+  I do not know how to answer that yet in the home profile. Try rephrasing or add it to the home knowledge base.

@@ -1,0 +1,23 @@
+- title: Deployment checklist
+  keywords:
+    - deploy
+    - release
+    - rollout
+  response: |
+    1. Merge the feature branch into `main`.
+    2. Run the CI/CD pipeline and confirm it passes.
+    3. Notify the #eng-automation Slack channel before promoting to production.
+    4. Use `make deploy-production` and monitor metrics for 15 minutes.
+- title: Incident escalation
+  keywords:
+    - incident
+    - outage
+    - pager
+  response: |
+    Follow the incident playbook: create a ticket, page the on-call engineer, and update the Slack incident channel every 10 minutes.
+- title: Knowledge base refresh
+  keywords:
+    - knowledge base
+    - documentation
+  response: |
+    Run `python tools/ingest_kb.py --profile work` to ingest new documents from the wiki every 6 hours.

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Disco EL Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        background-color: #f8f9fb;
+        color: #1f2933;
+      }
+      body {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        padding: 2rem;
+      }
+      .container {
+        width: min(960px, 100%);
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(15, 23, 42, 0.15);
+        padding: 2rem;
+      }
+      h1 {
+        margin-top: 0;
+      }
+      #history {
+        border: 1px solid #d2d6dc;
+        border-radius: 8px;
+        padding: 1rem;
+        height: 320px;
+        overflow-y: auto;
+        background-color: #fdfdfd;
+        margin-bottom: 1.5rem;
+      }
+      .turn {
+        margin-bottom: 1rem;
+      }
+      .turn:last-child {
+        margin-bottom: 0;
+      }
+      .user {
+        font-weight: 600;
+      }
+      .skill {
+        margin-left: 1rem;
+        padding: 0.35rem 0.6rem;
+        background: #eff6ff;
+        border-radius: 6px;
+        margin-top: 0.35rem;
+      }
+      form {
+        display: flex;
+        gap: 0.5rem;
+      }
+      input[type="text"] {
+        flex: 1;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid #cbd2d9;
+        font-size: 1rem;
+      }
+      button, select {
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border: none;
+        background-color: #2563eb;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      select {
+        background-color: #fff;
+        color: #111827;
+        border: 1px solid #cbd2d9;
+      }
+      button:hover {
+        background-color: #1d4ed8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Disco EL Assistant</h1>
+      <p>Select the profile and chat with the orchestrator. Type your message and press Enter.</p>
+      <div id="history"></div>
+      <form id="chat-form">
+        <select id="profile">
+          <option value="work">Work</option>
+          <option value="home">Home</option>
+        </select>
+        <input id="message" type="text" placeholder="Ask something..." required />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+    <script>
+      const form = document.getElementById("chat-form");
+      const historyContainer = document.getElementById("history");
+
+      const renderHistory = (history) => {
+        historyContainer.innerHTML = "";
+        history.forEach((turn) => {
+          const turnEl = document.createElement("div");
+          turnEl.className = "turn";
+
+          const userEl = document.createElement("div");
+          userEl.className = "user";
+          userEl.textContent = `You: ${turn.user}`;
+          turnEl.appendChild(userEl);
+
+          turn.responses.forEach((response) => {
+            const responseEl = document.createElement("div");
+            responseEl.className = "skill";
+            responseEl.textContent = `${response.skill}: ${response.content}`;
+            turnEl.appendChild(responseEl);
+          });
+
+          historyContainer.appendChild(turnEl);
+        });
+        historyContainer.scrollTop = historyContainer.scrollHeight;
+      };
+
+      const fetchHistory = async (profile) => {
+        const res = await fetch(`/api/history?profile=${encodeURIComponent(profile)}`);
+        if (res.ok) {
+          const data = await res.json();
+          renderHistory(data.history || []);
+        }
+      };
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const messageInput = document.getElementById("message");
+        const profileInput = document.getElementById("profile");
+        const message = messageInput.value.trim();
+        const profile = profileInput.value;
+        if (!message) {
+          return;
+        }
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message, profile }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          renderHistory(data.history || []);
+          messageInput.value = "";
+          messageInput.focus();
+        } else {
+          alert("Failed to send message");
+        }
+      });
+
+      document.getElementById("profile").addEventListener("change", (event) => {
+        fetchHistory(event.target.value);
+      });
+
+      fetchHistory(document.getElementById("profile").value);
+    </script>
+  </body>
+</html>

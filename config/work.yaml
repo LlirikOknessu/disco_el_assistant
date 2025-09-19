@@ -1,0 +1,22 @@
+profile: work
+integrations:
+  slack:
+    enabled: true
+    bot_token_env: SLACK_BOT_TOKEN
+    signing_secret_env: SLACK_SIGNING_SECRET
+    default_channel: "#eng-automation"
+    notification_template: "[{profile}] {message}"
+  telegram:
+    enabled: true
+    bot_token_env: TELEGRAM_BOT_TOKEN
+    chat_id_env: TELEGRAM_CHAT_ID
+    allowed_usernames:
+      - boss_user
+      - incident_manager
+  knowledge_base:
+    enabled: true
+    path: data/work_kb.yaml
+    embeddings_model: all-MiniLM-L6-v2
+    refresh_interval_hours: 6
+fallback_message: >-
+  I'm not sure yet. Please create a ticket so that we can add this capability to the work profile.

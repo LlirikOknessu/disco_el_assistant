@@ -1,0 +1,19 @@
+- title: Weekly groceries
+  keywords:
+    - groceries
+    - shopping list
+    - supermarket
+  response: |
+    Check the shared Note for the latest shopping list. Order via the delivery app on Thursday evening.
+- title: Home automation reset
+  keywords:
+    - reboot hub
+    - smart home
+  response: |
+    Power cycle the smart hub in the living room and wait 3 minutes before re-enabling automations.
+- title: Family calendar sync
+  keywords:
+    - calendar
+    - schedule
+  response: |
+    Use the `/sync_calendar` command in Telegram to pull events from Google Calendar every morning at 7am.
