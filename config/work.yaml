@@ -1,0 +1,11 @@
+# Profile overrides for a work-focused assistant setup.
+inherits: base
+
+app:
+  profile: work
+
+paths:
+  workspace: ${WORKSPACE_DIR:./workspace/work}
+
+vector_db:
+  collection: work_memory
