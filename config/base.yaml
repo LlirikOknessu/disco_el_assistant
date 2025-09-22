@@ -1,0 +1,18 @@
+app:
+  name: Disco EL Assistant
+  environment: ${ENVIRONMENT:development}
+  profile: ${ASSISTANT_PROFILE:base}
+
+paths:
+  workspace: ${WORKSPACE_DIR:./workspace}
+
+openai:
+  api_key_env: OPENAI_API_KEY
+  model: gpt-4o-mini
+
+vector_db:
+  url: ${VECTOR_DB_URL:}
+  collection: assistant_memory
+
+logging:
+  level: ${LOG_LEVEL:INFO}

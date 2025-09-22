@@ -1,123 +1,142 @@
 # Disco EL Assistant
 
-Disco EL Assistant is a lightweight environment for experimenting with a local
-skill orchestrator. Two profiles are provided: a "work" profile that mimics an
-enterprise environment and a "home" profile for personal automations. The
-project ships with both a Typer based CLI and an optional FastAPI + SPA web UI
-so you can test skills in whichever environment fits best.
+Disco EL Assistant is a lightweight playground for experimenting with a local
+orchestrator and multiple user interfaces. The project now ships with:
 
-## Requirements
+- a rule-based demo orchestrator that loads profile-specific configurations and
+  knowledge bases,
+- an advanced `DialogueOrchestrator` with memory management and pluggable skill
+  routing,
+- Typer-based CLI and FastAPI web UI for chatting with the assistant, and
+- configuration scaffolding for work and home profiles, including local
+  knowledge base examples.
 
-- Python 3.10+
-- A virtual environment manager such as `venv`, `conda` or `pipenv`
-- (Optional) Node-free environment for the SPA – all assets are served as plain HTML/CSS/JS
+## Project structure
+
+```
+core/          # Orchestrators, memory management and shared helpers
+skills/        # Example skill implementations used by the advanced orchestrator
+config/        # Profile configuration files (base/work/home, skill matrix, etc.)
+interfaces/    # User interfaces (CLI and web)
+services/      # Integrations such as the OpenAI client wrapper
+scripts/       # Utility scripts like environment bootstrapping
+```
 
 ## Quick start
 
-Follow the same steps on both your work and home machines. Use different
-profiles to switch behaviours and integrations.
+1. **Clone the repository**
 
-### 1. Clone the repository
-
-```bash
+   ```bash
 git clone https://github.com/your-org/disco_el_assistant.git
 cd disco_el_assistant
-```
+   ```
 
-### 2. Create a virtual environment and install dependencies
+2. **Prepare a virtual environment and install dependencies**
 
-```bash
+   You can run the helper script:
+
+   ```bash
+./scripts/setup_env.sh
+   ```
+
+   or perform the steps manually:
+
+   ```bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-```
+   ```
 
-### 3. Configure environment variables
+3. **Configure environment variables**
 
-Copy the template file and fill in the tokens relevant to your setup.
-
-```bash
+   ```bash
 cp .env.example .env
-```
+   ```
 
-- On the **work** machine, add corporate Slack and Telegram secrets.
-- On the **home** machine, add tokens for personal bots or leave values blank if
-  the integration is disabled in the profile.
+   Update the copied file with your secrets. The core variables are:
 
-Environment variables are loaded automatically by both the CLI and the web app.
+   | Variable | Description |
+   | --- | --- |
+   | `OPENAI_API_KEY` | OpenAI API key used by the advanced orchestrator. |
+   | `ASSISTANT_PROFILE` | Default profile (`base`, `work`, `home`, etc.). |
+   | `VECTOR_DB_URL` | Optional connection string to a vector database. |
+   | `ENVIRONMENT` | Runtime environment name (`development`, `production`). |
+   | `LOG_LEVEL` | Log verbosity for services. |
+   | `CONFIG_PATH` | Default path to the profile configuration file. |
+   | `WORKSPACE_DIR` | Directory for temporary files and exports. |
 
-### 4. Review profile configuration
+   Additional variables enable integrations for the CLI/web demo (Slack and
+   Telegram tokens for both work and home profiles).
 
-Profile-specific settings live in `config/work.yaml` and `config/home.yaml`. The
-files describe which integrations are active (Slack, Telegram, and the local
-knowledge base) and how often the knowledge base is refreshed.
+4. **Review profile configuration**
 
-Adjust the YAML files if you want to enable or disable integrations or point the
-knowledge base at different files.
+   Profiles live in `config/work.yaml` and `config/home.yaml` and inherit from
+   `config/base.yaml`. The files describe integrations (Slack, Telegram,
+   knowledge bases), vector-store collections, and profile-specific fallbacks.
+   Edit them to match your environment or add new profiles by creating additional
+   YAML files that inherit from `base`.
 
-### 5. Launch the CLI
+## Command-line interface
 
-Interactive chat session using the orchestrator:
+Launch an interactive chat session with the demo orchestrator:
 
 ```bash
 python -m interfaces.cli chat --profile work
 ```
 
-Use `--profile home` on your personal machine. Type `exit` or `quit` to stop the session.
+Use `--profile home` for the personal configuration. Type `exit` or `quit` to
+end the session. The CLI prints which integrations are enabled for the selected
+profile and streams skill responses as they are produced.
 
-### 6. Launch the web interface (optional)
+## Web interface
 
-Run the FastAPI server with Uvicorn:
+Run the FastAPI server with Uvicorn to access the lightweight SPA:
 
 ```bash
 uvicorn interfaces.web.app:app --reload --port 8000
 ```
 
-Open <http://localhost:8000> in your browser. Select the desired profile from
-the drop-down and start chatting. The web UI keeps the full skill conversation
-history visible at all times.
+Then open <http://localhost:8000>. Choose a profile from the drop-down, send a
+message, and inspect the live conversation history.
 
-## Security policy
+## Working with the advanced orchestrator
 
-- **Secret management:** store API keys and tokens in the `.env` file locally and
-  never commit them to version control. In production environments prefer a
-  dedicated secret manager (Vault, AWS Secrets Manager, etc.) and inject them as
-  environment variables.
-- **Profile isolation:** each profile uses its own set of environment variable
-  names to avoid leaking work credentials into the home setup and vice versa.
-- **Logging:** the sample orchestrator logs only high-level events. If you add
-  logging or persistence, redact tokens and personal data. Avoid writing secrets
-  to stdout or shared log files.
-- **Configuration files:** YAML configurations may contain paths to local
-  knowledge bases. Restrict file permissions so that only trusted users can
-  modify them.
+Developers can interact with the more sophisticated `DialogueOrchestrator` from
+`core.orchestrator`. It coordinates OpenAI-backed skills, keeps both short-term
+and optional long-term memory, and uses a skill matrix to resolve conflicts.
+Skill configuration files live under `skills/config/`, and the skill registry is
+exposed via `skills/__init__.py`.
 
-## FAQ: extending the skill set
+Key helpers:
 
-**How do I add a new skill?**
+- `core.load_profile_config` – loads and merges profile YAML files with
+  inheritance support.
+- `core.DialogueOrchestrator` – stateful orchestrator using the OpenAI client
+  and memory abstractions.
+- `core.Orchestrator` – rule-based orchestrator used by the sample CLI and web
+  UI, featuring a simple knowledge base loader.
 
-Create a new class in `core/skills.py` that implements the `respond` method and
-register it inside `Orchestrator._build_skills`. Use the profile configuration
-file to toggle the skill on and off if it depends on external services.
+## Security guidance
 
-**Can the assistant call external APIs?**
+- **Secret management:** keep API keys and tokens in the local `.env` file or a
+  dedicated secret manager. Never commit them to version control.
+- **Profile isolation:** work and home profiles read from different environment
+  variable names to avoid mixing credentials.
+- **Logging:** redact tokens and sensitive data if you extend logging or add
+  persistence. Avoid writing secrets to stdout or shared log files.
+- **Knowledge bases:** limit file permissions for YAML knowledge bases so only
+  trusted users can edit them.
 
-Yes. Add the integration settings to the relevant profile YAML and inject the
-required clients inside your skill implementation. Respect the security policy
-when handling tokens and user data.
+## Extending the assistant
 
-**How do I extend the knowledge base?**
+- **Add a new CLI/Web demo skill:** create a class in `core/skills.py` that
+  implements `respond`, then register it inside `Orchestrator._build_skills`.
+- **Add a new advanced skill:** implement a subclass of `skills.base.BaseSkill`
+  and register it in `skills/__init__.py`. Provide configuration under
+  `skills/config/` to control prompts, weights, and behaviour.
+- **Persist conversations:** extend `core.orchestrator.DialogueOrchestrator` to
+  plug in a long-term memory backend (e.g., `SQLiteLongTermMemory` in
+  `core/memory.py`) or integrate a vector store referenced from the profile
+  configuration.
 
-Edit the YAML files in `data/` or point the configuration to your own dataset.
-Every entry supports `keywords`, a `title`, and a `response`. Re-run the CLI or
-refresh the web UI to load the new content.
-
-**How do I persist conversations?**
-
-The current orchestrator keeps history in memory. To make it persistent, extend
-`Orchestrator.handle_message` to write to a database or file system, ensuring
-that personally identifiable information is encrypted at rest.
-
----
-
-Have fun experimenting with profiles and skills! Contributions are welcome.
+Happy experimenting!

@@ -1,3 +1,15 @@
+# Profile overrides for a personal assistant setup.
+inherits: base
+
+app:
+  profile: home
+
+paths:
+  workspace: ${WORKSPACE_DIR:./workspace/home}
+
+vector_db:
+  collection: home_memory
+
 profile: home
 integrations:
   slack:
