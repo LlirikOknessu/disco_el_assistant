@@ -1,7 +1,7 @@
 # Disco EL Assistant
 
 Disco EL Assistant is a lightweight playground for experimenting with a local
-orchestrator and multiple user interfaces. The project now ships with:
+orchestrator and multiple user interfaces. The project ships with:
 
 - a rule-based demo orchestrator that loads profile-specific configurations and
   knowledge bases,
@@ -27,8 +27,8 @@ scripts/       # Utility scripts like environment bootstrapping
 1. **Clone the repository**
 
    ```bash
-git clone https://github.com/your-org/disco_el_assistant.git
-cd disco_el_assistant
+   git clone https://github.com/your-org/disco_el_assistant.git
+   cd disco_el_assistant
    ```
 
 2. **Prepare a virtual environment and install dependencies**
@@ -36,24 +36,24 @@ cd disco_el_assistant
    You can run the helper script:
 
    ```bash
-./scripts/setup_env.sh
+   ./scripts/setup_env.sh
    ```
 
    or perform the steps manually:
 
    ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+   python -m venv .venv
+   source .venv/bin/activate  # Windows: .venv\Scripts\activate
+   pip install -r requirements.txt
    ```
 
 3. **Configure environment variables**
 
    ```bash
-cp .env.example .env
+   cp .env.example .env
    ```
 
-   Update the copied file with your secrets. The core variables are:
+   Update the copied file with your secrets. Core variables include:
 
    | Variable | Description |
    | --- | --- |
@@ -138,5 +138,17 @@ Key helpers:
   plug in a long-term memory backend (e.g., `SQLiteLongTermMemory` in
   `core/memory.py`) or integrate a vector store referenced from the profile
   configuration.
+
+## Быстрый старт (кратко на русском)
+
+1. Скопируйте окружение: `cp .env.example .env`.
+2. Запустите установку зависимостей: `./scripts/setup_env.sh` либо активируйте
+   виртуальное окружение и выполните `pip install -r requirements.txt`.
+3. Обновите переменные окружения (`OPENAI_API_KEY`, `ASSISTANT_PROFILE`,
+   `VECTOR_DB_URL` и др.) и настройте профили в `config/base.yaml`,
+   `config/work.yaml`, `config/home.yaml`.
+
+Скрипт `scripts/setup_env.sh` создаст виртуальное окружение, установит
+зависимости и подготовит `.env` при первом запуске.
 
 Happy experimenting!

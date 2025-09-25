@@ -1,5 +1,11 @@
 """Core modules for the Disco EL assistant."""
-from core.orchestrator import DialogueOrchestrator, Orchestrator, load_profile_config
+from core.orchestrator import (
+    ConversationTurn,
+    DialogueOrchestrator,
+    Orchestrator,
+    SkillDecision,
+    load_profile_config,
+)
 from core.memory import (
     MemoryManager,
     MemoryRecord,
@@ -15,8 +21,10 @@ from core.skills import (
 )
 
 __all__ = [
+    "ConversationTurn",
     "DialogueOrchestrator",
     "Orchestrator",
+    "SkillDecision",
     "load_profile_config",
     "MemoryManager",
     "MemoryRecord",
