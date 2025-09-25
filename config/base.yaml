@@ -5,6 +5,8 @@ app:
 
 paths:
   workspace: ${WORKSPACE_DIR:./workspace}
+  skill_config_dir: ${SKILL_CONFIG_DIR:skills/config}
+  skill_matrix: ${SKILL_MATRIX_PATH:config/skill_matrix.yaml}
 
 openai:
   api_key_env: OPENAI_API_KEY
