@@ -1,25 +1,71 @@
-{
-  "default_skill": "empathy",
-  "priorities": {
-    "empathy": 2.0,
-    "logic": 1.5
-  },
-  "transition_weights": {
-    "empathy": {
-      "empathy": 0.7,
-      "logic": 0.5
-    },
-    "logic": {
-      "logic": 0.8,
-      "empathy": 0.6
-    }
-  },
-  "conflict_resolution": {
-    "empathy": {
-      "overrides": ["logic"]
-    },
-    "logic": {
-      "overrides": []
-    }
-  }
-}
+default_skill: volition
+priorities:
+  empathy: 1.15
+  logic: 1.1
+  authority: 1.25
+  volition: 1.3
+  drama: 1.05
+  half_light: 1.2
+  encyclopedia: 1.1
+  inland_empire: 1.18
+transition_weights:
+  empathy:
+    empathy: 0.95
+    volition: 1.05
+    inland_empire: 1.0
+  logic:
+    logic: 0.95
+    encyclopedia: 1.1
+    authority: 0.9
+  authority:
+    authority: 0.85
+    volition: 1.05
+    half_light: 1.1
+  volition:
+    volition: 0.9
+    empathy: 1.05
+    logic: 1.0
+  drama:
+    drama: 0.85
+    inland_empire: 1.1
+    half_light: 0.9
+  half_light:
+    half_light: 0.95
+    authority: 1.05
+    inland_empire: 1.05
+  encyclopedia:
+    encyclopedia: 0.9
+    logic: 1.1
+    empathy: 0.95
+  inland_empire:
+    inland_empire: 0.9
+    drama: 1.1
+    empathy: 1.0
+conflict_resolution:
+  authority:
+    overrides:
+      - drama
+      - inland_empire
+  volition:
+    overrides:
+      - authority
+      - half_light
+  drama:
+    overrides:
+      - inland_empire
+  half_light:
+    overrides:
+      - drama
+  encyclopedia:
+    overrides:
+      - drama
+  inland_empire:
+    overrides:
+      - logic
+  empathy:
+    overrides:
+      - authority
+  logic:
+    overrides:
+      - drama
+      - inland_empire

@@ -1,18 +1,10 @@
-"""Empathetic conversation skill."""
+"""Empathetic conversation skill built from persona configuration."""
 from __future__ import annotations
 
-from typing import Dict, Any
-
-from skills.base import BaseSkill
+from skills.persona import PersonaSkill
 
 
-class EmpathySkill(BaseSkill):
-    """Skill that emphasises compassionate and supportive communication."""
+class EmpathySkill(PersonaSkill):
+    """Backward-compatible alias for the empathy persona."""
 
-    def generate_response(self, context: Dict[str, Any]) -> str:
-        extra = self.config.get(
-            "response_preamble",
-            "Acknowledge the user's emotions, validate their feelings and offer supportive language.",
-        )
-        prompt = self.build_prompt(context, extra_guidance=extra)
-        return self.openai_client.generate_for_skill(self.name, prompt, temperature=0.8)
+    pass

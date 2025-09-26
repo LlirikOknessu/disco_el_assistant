@@ -1,18 +1,10 @@
-"""Analytical reasoning skill."""
+"""Analytical reasoning skill built from persona configuration."""
 from __future__ import annotations
 
-from typing import Dict, Any
-
-from skills.base import BaseSkill
+from skills.persona import PersonaSkill
 
 
-class LogicSkill(BaseSkill):
-    """Skill focusing on structured, analytical reasoning."""
+class LogicSkill(PersonaSkill):
+    """Backward-compatible alias for the logic persona."""
 
-    def generate_response(self, context: Dict[str, Any]) -> str:
-        extra = self.config.get(
-            "response_preamble",
-            "Respond with step-by-step reasoning and reference evidence from the conversation.",
-        )
-        prompt = self.build_prompt(context, extra_guidance=extra)
-        return self.openai_client.generate_for_skill(self.name, prompt, temperature=0.2)
+    pass
